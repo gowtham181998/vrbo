@@ -6,9 +6,9 @@ Before starting make sure you have java installed, and any IDE.
 2) open the project in any IDE (as maven project)
 3) run the DemoApplication.java
 4) End points exposed:
-   a) http://localhost:8081/vrbo/getClosestListings/{place/location}/{radius}
-   b) http://localhost:8081/vrbo/threeDatesWithHighestPrice/{place/location}/{radius}
-   c) http://localhost:8081/vrbo/perNightPricesForNextOneYear/{place/location}/{radius}
+   * http://localhost:8081/vrbo/getClosestListings/{place/location}/{radius}
+   * http://localhost:8081/vrbo/threeDatesWithHighestPrice/{place/location}/{radius}
+   * http://localhost:8081/vrbo/perNightPricesForNextOneYear/{place/location}/{radius}
 
 Have implemented 3 API's:
 
