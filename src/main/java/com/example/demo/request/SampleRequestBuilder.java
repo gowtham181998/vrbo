@@ -4,8 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
 @Component
 public class SampleRequestBuilder {
 
@@ -19,27 +17,27 @@ public class SampleRequestBuilder {
         JSONObject requestJSON = new JSONObject();
 
         JSONObject pagingJSON = new JSONObject();
-        pagingJSON.put("page",1);
-        pagingJSON.put("pageSize",100);
-        requestJSON.put("paging",pagingJSON);
+        pagingJSON.put("page", 1);
+        pagingJSON.put("pageSize", 100);
+        requestJSON.put("paging", pagingJSON);
 
-        requestJSON.put("filterVersion","1");
+        requestJSON.put("filterVersion", "1");
 
         JSONObject coreFiltersJSON = new JSONObject();
-        coreFiltersJSON.put("children",0);
-        coreFiltersJSON.put("maxBathrooms", (Collection<?>) null);
-        coreFiltersJSON.put("maxBedrooms", (Collection<?>) null);
-        coreFiltersJSON.put("maxNightlyPrice", (Collection<?>) null);
-        coreFiltersJSON.put("maxTotalPrice", (Collection<?>) null);
-        coreFiltersJSON.put("minBathrooms",0);
-        coreFiltersJSON.put("minBedrooms",0);
-        coreFiltersJSON.put("minNightlyPrice",0);
-        coreFiltersJSON.put("minTotalPrice", (Collection<?>) null);
-        coreFiltersJSON.put("pets",0);
-        requestJSON.put("coreFilters",coreFiltersJSON);
+        coreFiltersJSON.put("children", 0);
+        coreFiltersJSON.put("maxBathrooms", null);
+        coreFiltersJSON.put("maxBedrooms", null);
+        coreFiltersJSON.put("maxNightlyPrice", null);
+        coreFiltersJSON.put("maxTotalPrice", null);
+        coreFiltersJSON.put("minBathrooms", 0);
+        coreFiltersJSON.put("minBedrooms", 0);
+        coreFiltersJSON.put("minNightlyPrice", 0);
+        coreFiltersJSON.put("minTotalPrice", null);
+        coreFiltersJSON.put("pets", 0);
+        requestJSON.put("coreFilters", coreFiltersJSON);
 
         JSONArray filtersArray = new JSONArray();
-        requestJSON.put("filters",filtersArray);
+        requestJSON.put("filters", filtersArray);
 
         requestJSON.put("q",place);
 
