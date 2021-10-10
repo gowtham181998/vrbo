@@ -22,20 +22,20 @@ public class WebScraperServiceImpl implements WebScraperService{
 
     @Override
     @Cacheable(cacheNames = "get-prices", unless = "#result==null")
-    public List<Integer> getPrices(String url) throws IOException, ParseException {
-        Document doc = Jsoup.parse(new URL("https://www.vrbo.com"+url), 20000);
+    public List<Long> getPrices(String url) throws IOException, ParseException {
+        Document doc = Jsoup.parse(new URL("https://www.vrbo.com" + url), 20000);
 
         return searchLinkTags(doc);
     }
 
-    private List<Integer> searchLinkTags(Document doc) throws ParseException {
+    private List<Long> searchLinkTags(Document doc) throws ParseException {
         Elements elems = doc.getElementsByTag("script");
 
         String result[] = new String[2];
 
         elems.stream().forEach(element -> {
-           // LOGGER.info("HEY HELLO     "+element.toString().indexOf("window.__INITIAL_STATE__ = {\"router\":{\"location\":{\"pathname\":"));
-            if(element.toString().contains("window.__INITIAL_STATE__ = {\"router\":{\"location\":{\"pathname\":")){
+            // LOGGER.info("HEY HELLO     "+element.toString().indexOf("window.__INITIAL_STATE__ = {\"router\":{\"location\":{\"pathname\":"));
+            if (element.toString().contains("window.__INITIAL_STATE__ = {\"router\":{\"location\":{\"pathname\":")) {
                 result[0] = element.toString();
             }
         });
@@ -55,7 +55,7 @@ public class WebScraperServiceImpl implements WebScraperService{
 
         JSONObject ratesJSON = (JSONObject) jsonObject.get("rateSummary");
 
-        ArrayList<Integer> arrayList = (ArrayList<Integer>) ratesJSON.get("rentNights");
+        ArrayList<Long> arrayList = (ArrayList<Long>) ratesJSON.get("rentNights");
 
         return arrayList;
     }

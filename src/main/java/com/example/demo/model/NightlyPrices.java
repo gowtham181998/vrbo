@@ -10,5 +10,5 @@ import java.util.List;
 public class NightlyPrices {
     private PropertyInfo propertyInfo;
 
-    private List<Integer> prices;
+    private List<Long> prices;
 }

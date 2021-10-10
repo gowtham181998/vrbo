@@ -9,7 +9,7 @@ public class PropertyInfo {
 
     String propertyName;
 
-    Double pricePerNight;
+    double pricePerNight;
 
     String propertyId;
 

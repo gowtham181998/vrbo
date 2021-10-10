@@ -9,7 +9,9 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
@@ -125,7 +127,7 @@ public class VrboController {
         propertyInfoList.stream().forEach(propertyInfo -> {
             NightlyPrices nightlyPrices = new NightlyPrices();
             try {
-                List<Integer> prices = webScraperService.getPrices(propertyInfo.getDetailedPageUrl());
+                List<Long> prices = webScraperService.getPrices(propertyInfo.getDetailedPageUrl());
                 nightlyPrices.setPrices(prices);
                 nightlyPrices.setPropertyInfo(propertyInfo);
                 nightlyPricesList.add(nightlyPrices);
@@ -138,52 +140,47 @@ public class VrboController {
         return nightlyPricesList;
     }
 
-    private List<String> fetchTopThreePrices(NightlyPrices nightlyPrices){
-        int flag = 0;
+    private List<String> fetchTopThreePrices(NightlyPrices nightlyPrices) {
+        int counter = 0;
         int indices[] = new int[3];
-        String maxPrice;
-        if(nightlyPrices.getPrices() == null){
-            flag=1;
-            maxPrice = String.valueOf(nightlyPrices.getPropertyInfo().getPricePerNight());
-        }else{
-            maxPrice = String.valueOf(Collections.max(nightlyPrices.getPrices()));
-            int counter =0;
-            for(int i=0;i<Math.min(365,nightlyPrices.getPrices().size()); i++){
-                if(Integer.valueOf(String.valueOf(nightlyPrices.getPrices().get(i))) == Integer.valueOf((maxPrice))){
+        long maxPrice;
+        List<String> topThreePricesWithDates = new ArrayList<>();
+        if (nightlyPrices.getPrices() == null) {
+            indices = new int[]{0, 1, 2};
+            maxPrice = (long) nightlyPrices.getPropertyInfo().getPricePerNight();
+            counter = 3;
+        } else {
+            maxPrice = nightlyPrices.getPrices().get(0);
+            for (int i = 1; i < Math.min(365, nightlyPrices.getPrices().size()); i++) {
+                if (maxPrice < nightlyPrices.getPrices().get(i)) {
+                    maxPrice = nightlyPrices.getPrices().get(i);
+                }
+            }
+            for (int i = 0; i < Math.min(365, nightlyPrices.getPrices().size()); i++) {
+                if (maxPrice == nightlyPrices.getPrices().get(i)) {
                     indices[counter] = i;
                     counter++;
                 }
-                if(counter == 3)
+                if (counter == 3)
                     break;
             }
 
         }
-        List<String> topThreePricesWithDates = new ArrayList<>();
-        topThreePricesWithDates.add(maxPrice);
+
+        topThreePricesWithDates.add(String.valueOf(maxPrice));
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Calendar calendar = Calendar.getInstance();
 
-        if(flag == 0){
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, indices[0]);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, indices[1]);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, indices[2]);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-        }else{
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, 0);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, 1);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, 2);
-            topThreePricesWithDates.add(formatter.format(calendar.getTime()));
-        }
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, indices[0]);
+        topThreePricesWithDates.add(formatter.format(calendar.getTime()));
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, indices[1]);
+        topThreePricesWithDates.add(counter > 1 ? formatter.format(calendar.getTime()) : null);
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, indices[2]);
+        topThreePricesWithDates.add(counter > 2 ? formatter.format(calendar.getTime()) : null);
+
         return topThreePricesWithDates;
     }
 
