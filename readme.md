@@ -33,5 +33,5 @@ able to get the data from the API.
 **Further enhancements:**
 
 * We can improve performance by using multithreading while performing web scraping.
-* Error handling can be improved further
+* Error handling can be improved further.
 * Response structure can be modified to convey execution status.
