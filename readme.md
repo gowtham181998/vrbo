@@ -12,10 +12,12 @@ Before starting make sure you have java installed, and any IDE.
 
 **Implemented 3 API's:**
 
-***getClosestListings/** - will return a csv file when you hit the end point from browser, with some info for each
+1)**getClosestListings/** - will return a csv file when you hit the end point from browser, with some info for each
 nearby place.
-***threeDatesWithHighestPrice/** - will return a csv file containing three dates with the highest price.
-***perNightPricesForNextOneYear/** - will return a csv file containing prices for each property for the next 12 months.
+
+2)**threeDatesWithHighestPrice/** - will return a csv file containing three dates with the highest price.
+
+3)**perNightPricesForNextOneYear/** - will return a csv file containing prices for each property for the next 12 months.
 
 =>Implemented an in-memory cache that caches the data for a particular location/radius, and uses LRU as it's eviction
 policy, when dealing with large systems we can use global caches like redis, using cache will lead to data inconsistency
