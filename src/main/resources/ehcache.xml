@@ -1,0 +1,6 @@
+<ehcache>
+    <cache name="closest-properties" maxEntriesLocalHeap="10" eternal="false" diskPersistent="false"
+           memoryStoryEvictionPolicy="LRU" timeToLiveSeconds="10000"/>
+    <cache name="get-prices" maxEntriesLocalHeap="10" eternal="false" diskPersistent="false"
+           memoryStoryEvictionPolicy="LRU" timeToLiveSeconds="10000"/>
+</ehcache>
