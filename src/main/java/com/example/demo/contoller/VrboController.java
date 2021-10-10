@@ -63,7 +63,7 @@ public class VrboController {
 
     }
 
-    @GetMapping(path = "/vrbo/topThreePrices/{place}/{radius}")
+    @GetMapping(path = "/vrbo/threeDatesWithHighestPrice/{place}/{radius}")
     public void getTopThreePrices(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException{
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -93,7 +93,7 @@ public class VrboController {
         LOGGER.info("Task to fetch the records to get three dates with highest price, is completed in {} milliseconds",stopWatch.getTotalTimeMillis());
     }
 
-    @GetMapping(path = "/vrbo/nightPrices/{place}/{radius}")
+    @GetMapping(path = "/vrbo/perNightPricesForNextOneYear/{place}/{radius}")
     public void getClosestListingsAndNightlyPrices(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
