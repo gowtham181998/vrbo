@@ -19,7 +19,7 @@ nearby place.
 
 3)**perNightPricesForNextOneYear/** - will return a csv file containing prices for each property for the next 12 months.
 
-=>Implemented an in-memory cache that caches the data for a particular location/radius, and uses LRU as it's eviction
+**Implemented an in-memory cache** that caches the data for a particular location/radius, and uses LRU as it's eviction
 policy, when dealing with large systems we can use global caches like redis, using cache will lead to data inconsistency
 problems (for example based on some news the prices may fall, then we can't show the user the price that's residing in
 cache).
