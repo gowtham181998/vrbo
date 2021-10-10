@@ -1,18 +1,21 @@
 package com.example.demo.util;
 
 import com.example.demo.model.NightlyPrices;
+import com.example.demo.model.PropertyInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 public class DownloadCSVFile {
 
     public static void downloadCSVFile(List<NightlyPrices> nightlyPricesList, OutputStream outputStream) throws IOException {
 
-        String headLine = "PropertyID ,PropertyName ,PropertyType ,PricePerNight";
+        String headLine = "PropertyID ,Headline ,PropertyType ,PricePerNight";
 
         StringBuilder dates = new StringBuilder();
 
@@ -55,16 +58,32 @@ public class DownloadCSVFile {
     }
 
     public static void downloadCSVFileForThreeDates(List<List<String>> priceDateInfo, OutputStream outputStream) throws IOException {
-        String headLine = "PropertyName , highestPrice, firstDate, secondDate, thirdDate\n";
+        String headLine = "Headline , highestPrice, firstDate, secondDate, thirdDate\n";
         outputStream.write(headLine.getBytes());
 
         priceDateInfo.stream().forEach(priceDate->{
             try {
-                outputStream.write(new StringBuilder().append(priceDate.get(4).replaceAll(",","")).append(",")
-                                .append(priceDate.get(0)).append(",")
-                                .append(priceDate.get(1)).append(",")
-                                .append(priceDate.get(2)).append(",")
+                outputStream.write(new StringBuilder().append(priceDate.get(4).replaceAll(",", "")).append(",")
+                        .append(priceDate.get(0)).append(",")
+                        .append(priceDate.get(1)).append(",")
+                        .append(priceDate.get(2)).append(",")
                         .append(priceDate.get(3)).append("\n").toString().getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void downloadCSVFileContainingPropertyInfo(List<PropertyInfo> propertyInfos, OutputStream outputStream) throws IOException {
+        String headLine = "PropertyID ,Headline ,PropertyType ,PricePerNight\n";
+        outputStream.write(headLine.getBytes());
+
+        propertyInfos.stream().forEach(propertyInfo -> {
+            try {
+                outputStream.write(new StringBuilder().append(propertyInfo.getPropertyId()).append(",")
+                        .append(propertyInfo.getPropertyName().replaceAll(",", "")).append(",")
+                        .append(propertyInfo.getPropertyType().replaceAll(",", "")).append(",")
+                        .append(propertyInfo.getPricePerNight()).append(",").append("\n").toString().getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
             }

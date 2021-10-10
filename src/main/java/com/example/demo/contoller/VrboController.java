@@ -12,9 +12,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
-import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -42,29 +39,28 @@ public class VrboController {
         LOGGER.info("Started fetching records.................................");
         List<PropertyInfo> propertyInfoList = vrboService.getClosestPlaces(place, radius);
 
-        response.setContentType("text/csv");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=closest-places.csv";
-        response.setHeader(headerKey, headerValue);
+        response.setHeader("Content-Disposition", "attachment;filename=nightly-prices.csv");
+        response.setHeader("Content-Type", "text/csv");
 
-        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"propertyId", "propertyName", "propertyType", "pricePerNight"};
-        String[] nameMapping = {"propertyId", "propertyName", "propertyType", "pricePerNight"};
+        OutputStream outputStream = response.getOutputStream();
 
-        csvWriter.writeHeader(csvHeader);
+        DownloadCSVFile.downloadCSVFileContainingPropertyInfo(propertyInfoList, outputStream);
 
-        for (PropertyInfo propertyInfo : propertyInfoList) {
-            csvWriter.write(propertyInfo, nameMapping);
+        try {
+            outputStream.flush();
+            outputStream.close();
+            response.flushBuffer();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write the data to excel " + e.getMessage(), e);
         }
 
-        csvWriter.close();
         stopWatch.stop();
-        LOGGER.info("Task to fetch the records is completed in {} milliseconds",stopWatch.getTotalTimeMillis());
+        LOGGER.info("Task to fetch the records is completed in {} milliseconds", stopWatch.getTotalTimeMillis());
 
     }
 
     @GetMapping(path = "/vrbo/threeDatesWithHighestPrice/{place}/{radius}")
-    public void getTopThreePrices(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException{
+    public void getThreeDateses(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOGGER.info("Started fetching records to get three dates with highest price................................");
@@ -73,9 +69,9 @@ public class VrboController {
         Map<String, List<String>> topPrices = new HashMap<>();
         nightlyPricesList.stream().forEach(nightlyPrices -> {
             datesInfo.add(fetchTopThreePrices(nightlyPrices));
-            datesInfo.get(datesInfo.size()-1).add(nightlyPrices.getPropertyInfo().getPropertyName());
+            datesInfo.get(datesInfo.size() - 1).add(nightlyPrices.getPropertyInfo().getPropertyName());
         });
-        response.setHeader("Content-Disposition", "attachment;filename=nightly-prices.csv");
+        response.setHeader("Content-Disposition", "attachment;filename=threeDates-with-highestPrice.csv");
         response.setHeader("Content-Type", "text/csv");
 
         OutputStream outputStream = response.getOutputStream();
@@ -102,7 +98,7 @@ public class VrboController {
         List<NightlyPrices> nightlyPricesList = getPrices(place, radius);
 
         LOGGER.info("Listing closest properties and their yearly night prices for next 12 months, based on user's address");
-        response.setHeader("Content-Disposition", "attachment;filename=nightly-prices.csv");
+        response.setHeader("Content-Disposition", "attachment;filename=perNightPrices-forNextOneYear.csv");
         response.setHeader("Content-Type", "text/csv");
 
         OutputStream outputStream = response.getOutputStream();
