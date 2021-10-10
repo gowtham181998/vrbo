@@ -28,7 +28,7 @@ cache).
 In the above end points when we substitute the place as street address like "5 Pace Dr, Edison, NJ USA" or "73 W Monroe
 St, Chicago, IL USA", the api that i'm calling is giving some errors saying 400 BAD REQUEST, but for the same if we
 provide values without street address like "Edison, NJ USA" or "Chicago, IL USA" or "Inorbit Hyderabad, Telanagana",
-able to get the data from the API (still trying to figure out what the issue is).
+able to get the data from the API.
 
 **Further enhancements:**
 
