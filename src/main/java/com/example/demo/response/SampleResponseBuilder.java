@@ -1,6 +1,5 @@
 package com.example.demo.response;
 
-import com.example.demo.Exception.ReportableException;
 import com.example.demo.model.PropertyInfo;
 import com.example.demo.util.DistanceCalculator;
 import org.slf4j.Logger;
@@ -25,7 +24,8 @@ public class SampleResponseBuilder {
         Map<String, Object> results = retrieveInnerData(data, "results");
 
         if(results == null){
-            throw new ReportableException("Unable to fetch the records due to some EXTERNAL_ERROR");
+            LOGGER.error("AN ERROR OCCURRED WHILE TRYING TO FETCH THE DATA DUE TO {}", response.get("errors"));
+            return null;
         }
 
         Map<String, Object> geography = retrieveInnerData(results, "geography");
@@ -36,6 +36,7 @@ public class SampleResponseBuilder {
         Double currentLongitude = retrieveDoubleValue(location, "longitude");
 
         AtomicInteger counter = new AtomicInteger();
+        AtomicInteger numberOfPlacesWithinGivenRadius = new AtomicInteger();
         List<Map<String, Object>> listings = null;
         if(results !=null) {
             listings = (List<Map<String, Object>>) results.get("listings");
@@ -76,16 +77,20 @@ public class SampleResponseBuilder {
                 propertyInfo.setGeoLatitude(retrieveDoubleValue(geoCode, "latitude"));
                 propertyInfo.setGeoLongitude(retrieveDoubleValue(geoCode, "longitude"));
 
-                Double distance = DistanceCalculator.distance(currentLatitude,currentLongitude,propertyInfo.getGeoLatitude(),propertyInfo.getGeoLongitude(),'K');
+                Double distance = DistanceCalculator.distance(currentLatitude, currentLongitude, propertyInfo.getGeoLatitude(), propertyInfo.getGeoLongitude(), 'K');
 
-               // LOGGER.info("distance between {},{} to {},{} is {}",currentLatitude,currentLongitude,propertyInfo.getGeoLatitude(),propertyInfo.getGeoLongitude(),distance);
+                // LOGGER.info("distance between {},{} to {},{} is {}",currentLatitude,currentLongitude,propertyInfo.getGeoLatitude(),propertyInfo.getGeoLongitude(),distance);
                 counter.addAndGet(1);
-               if(distance < radius && currentLatitude!=null && currentLongitude!=null) {
-                   propertyInfos.add(propertyInfo);
-               }
+                if (currentLatitude == null || currentLongitude == null || propertyInfo.getGeoLatitude() == null || propertyInfo.getGeoLongitude() == null) {
+                    propertyInfos.add(propertyInfo);
+                    numberOfPlacesWithinGivenRadius.addAndGet(1);
+                } else if (distance < radius && currentLatitude != null && currentLongitude != null) {
+                    propertyInfos.add(propertyInfo);
+                    numberOfPlacesWithinGivenRadius.addAndGet(1);
+                }
             });
         }
-        LOGGER.info("Total number of records are {}",counter);
+        LOGGER.info("Total number of records fetched are {} out of which {} are within the given radius", counter, numberOfPlacesWithinGivenRadius);
         return propertyInfos;
 
     }

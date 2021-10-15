@@ -39,7 +39,10 @@ public class VrboController {
         LOGGER.info("Started fetching records.................................");
         List<PropertyInfo> propertyInfoList = vrboService.getClosestPlaces(place, radius);
 
-        response.setHeader("Content-Disposition", "attachment;filename=nightly-prices.csv");
+        if (propertyInfoList == null)
+            return;
+
+        response.setHeader("Content-Disposition", "attachment;filename=closest-listings.csv");
         response.setHeader("Content-Type", "text/csv");
 
         OutputStream outputStream = response.getOutputStream();
@@ -65,6 +68,10 @@ public class VrboController {
         stopWatch.start();
         LOGGER.info("Started fetching records to get three dates with highest price................................");
         List<NightlyPrices> nightlyPricesList = getPrices(place, radius);
+
+        if (nightlyPricesList == null)
+            return;
+
         List<List<String>> datesInfo = new ArrayList<>();
         Map<String, List<String>> topPrices = new HashMap<>();
         nightlyPricesList.stream().forEach(nightlyPrices -> {
@@ -97,6 +104,9 @@ public class VrboController {
 
         List<NightlyPrices> nightlyPricesList = getPrices(place, radius);
 
+        if (nightlyPricesList == null)
+            return;
+
         LOGGER.info("Listing closest properties and their yearly night prices for next 12 months, based on user's address");
         response.setHeader("Content-Disposition", "attachment;filename=perNightPrices-forNextOneYear.csv");
         response.setHeader("Content-Type", "text/csv");
@@ -105,7 +115,7 @@ public class VrboController {
 
         DownloadCSVFile.downloadCSVFile(nightlyPricesList, outputStream);
 
-        try{
+        try {
             outputStream.flush();
             outputStream.close();
             response.flushBuffer();
@@ -116,8 +126,10 @@ public class VrboController {
         LOGGER.info("Task to fetch the record prizes for next 12 months is completed in {} milliseconds",stopWatch.getTotalTimeMillis());
     }
 
-    private List<NightlyPrices> getPrices(String place, int radius){
+    private List<NightlyPrices> getPrices(String place, int radius) {
         List<PropertyInfo> propertyInfoList = vrboService.getClosestPlaces(place, radius);
+        if (propertyInfoList == null)
+            return null;
         List<NightlyPrices> nightlyPricesList = new ArrayList<>();
 
         propertyInfoList.stream().forEach(propertyInfo -> {
