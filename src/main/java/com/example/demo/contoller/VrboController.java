@@ -63,7 +63,7 @@ public class VrboController {
     }
 
     @GetMapping(path = "/vrbo/threeDatesWithHighestPrice/{place}/{radius}")
-    public void getThreeDateses(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException {
+    public void getThreeDates(@PathVariable String place, @PathVariable int radius, HttpServletResponse response) throws IOException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         LOGGER.info("Started fetching records to get three dates with highest price................................");
